@@ -8,7 +8,7 @@ def grab_screen():
     last_time = time.time()
     fram, accum_time, fps = 0, 0, 0
 
-    while(True):
+    while True:
         # screenshot normalization
         screen = np.array(ImageGrab.grab(bbox=(0, 40, 800, 640)))
         # screen = cv2.cvtColor(screen, cv2.COLOR_BGR2RGB)

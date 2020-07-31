@@ -48,7 +48,7 @@ def main():
 
     last_time = time.time()
     fram, accum_time, fps = 0, 0, 0
-    while(True):
+    while True:
         # screenshot normalization
         screen = np.array(ImageGrab.grab(bbox=(0, 40, 800, 600)))
         screen = cv2.cvtColor(screen, cv2.COLOR_BGR2RGB)
@@ -68,21 +68,21 @@ def main():
         # detect lines
         left_line, right_line = [], []
 
-        lines = cv2.HoughLinesP(gray, 1, np.pi/180, 100, 100, 10)
+        lines = cv2.HoughLinesP(gray, 1, np.pi / 180, 100, 100, 10)
         try:
             for x1, y1, x2, y2 in lines[0]:
-                if (y2-y1)/(x2-x1) > 0:
+                if (y2 - y1) / (x2 - x1) > 0:
                     left_line.append((x1, y1, x2, y2))
                 else:
                     right_line.append((x1, y1, x2, y2))
                 cv2.line(screen, (x1, y1), (x2, y2), (0, 255, 0), 3)
-        except:
+        except Exception:
             pass
 
         # calculate fps
         this_time = time.time()
         # print('loop took {} seconds'.format(this_time-last_time))
-        accum_time += this_time-last_time
+        accum_time += this_time - last_time
         last_time = time.time()
 
         fram += 1
