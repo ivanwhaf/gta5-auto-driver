@@ -6,7 +6,7 @@ import time
 
 def grab_screen():
     last_time = time.time()
-    fram, accum_time, fps = 0, 0, 0
+    frame, accum_time, fps = 0, 0, 0
 
     while True:
         # screenshot normalization
@@ -21,11 +21,11 @@ def grab_screen():
         accum_time += this_time-last_time
         last_time = time.time()
 
-        fram += 1
+        frame += 1
         if accum_time >= 1:
-            fps = fram
-            print('fps:', fram)
-            fram, accum_time = 0, 0
+            fps = frame
+            print('fps:', frame)
+            frame, accum_time = 0, 0
 
         cv2.putText(screen, 'fps:{}'.format(fps), (10, 30),
                     cv2.FONT_HERSHEY_COMPLEX, 0.8, (0, 255, 0), 2)
