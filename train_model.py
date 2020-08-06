@@ -1,3 +1,5 @@
+# @Author: Ivan
+# @LastEdit: 2020/8/6
 import os
 import time
 import numpy as np  # install
@@ -12,7 +14,6 @@ from keras.models import load_model
 from keras.layers import Conv2D, MaxPooling2D, SeparableConv2D
 from keras.layers import Dense, Dropout, Activation, Flatten
 import matplotlib.pyplot as plt  # install
-
 # from image_util import show_intermediate_output, show_heatmap
 
 np.random.seed(1337)
@@ -199,10 +200,10 @@ def main():
     model = train_model(model, X_train, Y_train, X_val, Y_val)  # 训练模型
     end = time.clock()
 
-    classes = model.predict_classes(X_test, verbose=0)  # 预测类别
+    pred_classes = model.predict_classes(X_test, verbose=0)  # 预测类别
 
-    test_accuracy = np.mean(np.equal(y_test, classes))
-    right = np.sum(np.equal(y_test, classes))
+    test_accuracy = np.mean(np.equal(y_test, pred_classes))
+    right = np.sum(np.equal(y_test, pred_classes))
 
     print('Total training time:', end - start)
     print('Test number:', len(Y_test))

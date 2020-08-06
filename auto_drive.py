@@ -1,8 +1,9 @@
+# @Author: Ivan
+# @LastEdit: 2020/8/6
 import time
 import cv2
 import numpy as np
 from PIL import ImageGrab
-import keras
 from keras.models import load_model
 from keras import backend as K
 from key_util import press_key, release_key
@@ -82,7 +83,6 @@ def main():
 
         # detect lines
         # left_line, right_line = [], []
-
         # lines = cv2.HoughLinesP(gray, 1, np.pi / 180, 100, 100, 10)
         # try:
         #     for x1, y1, x2, y2 in lines[0]:
@@ -132,9 +132,9 @@ def main():
             right()
 
         count += 1
-
         if count == 100:
             break
+
         # show screenshot
         cv2.imshow('screen', test_img)
         if cv2.waitKey(25) & 0xFF == ord('q'):

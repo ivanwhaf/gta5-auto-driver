@@ -1,3 +1,5 @@
+# @Author: Ivan
+# @LastEdit: 2020/8/6
 import time
 import cv2
 import numpy as np
@@ -47,6 +49,7 @@ def main():
 
     last_time = time.time()
     frame, accum_time, fps = 0, 0, 0
+    train_num = 2000
 
     train_data = []
     while True:
@@ -79,7 +82,6 @@ def main():
 
         # detect lines
         # left_line, right_line = [], []
-
         # lines = cv2.HoughLinesP(gray, 1, np.pi / 180, 100, 100, 10)
         # try:
         #     for x1, y1, x2, y2 in lines[0]:
@@ -119,7 +121,7 @@ def main():
         train_data.append([train_img, key_output])
 
         print(len(train_data))
-        if len(train_data) == 2000:
+        if len(train_data) == train_num:
             np.save('train_data.npy', train_data)
             break
 

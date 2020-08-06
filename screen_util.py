@@ -1,7 +1,9 @@
+# @Author: Ivan
+# @LastEdit: 2020/8/6
+import time
+import cv2
 import numpy as np
 from PIL import ImageGrab
-import cv2
-import time
 
 
 def grab_screen():
@@ -17,8 +19,8 @@ def grab_screen():
 
         # calculate fps
         this_time = time.time()
-        print('loop took {} seconds'.format(this_time-last_time))
-        accum_time += this_time-last_time
+        print('loop took {} seconds'.format(this_time - last_time))
+        accum_time += this_time - last_time
         last_time = time.time()
 
         frame += 1

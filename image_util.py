@@ -1,7 +1,8 @@
+# @Author: Ivan
+# @LastEdit: 2020/8/6
 import os
 import cv2  # install
 import numpy as np  # install
-# from PIL import Image  # install
 from keras import backend as K
 from keras.models import Model
 import matplotlib.pyplot as plt  # installs
@@ -161,7 +162,7 @@ def face_detect():
     """
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     cap = cv2.VideoCapture(0)
-    while (True):
+    while True:
         ret, fram = cap.read()
         faces = face_cascade.detectMultiScale(fram, 1.1, 7)
         for x, y, w, h in faces:
@@ -206,22 +207,22 @@ def d_hash(img):
     # 差值hash算法
     img = cv2.resize(img, (9, 8), interpolation=cv2.INTER_AREA)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    hash = ''
+    hash_ = ''
     for i in range(8):
         for j in range(8):
             if img[i, j] > img[i, j + 1]:
-                hash = hash + '1'
+                hash_ = hash_ + '1'
             else:
-                hash = hash + '0'
-    print("dHash:" + str(hash))
-    return hash
+                hash_ = hash_ + '0'
+    print("dHash:" + str(hash_))
+    return hash_
 
 
 def a_hash(img):
     # 均值hash算法
     img = cv2.resize(img, (8, 8))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    hash = ''
+    hash_ = ''
     average = 0
     for i in range(8):
         for j in range(8):
@@ -230,19 +231,19 @@ def a_hash(img):
 
     for i in range(8):
         for j in range(8):
-            if (img[i, j] > average):
-                hash = hash + '1'
+            if img[i, j] > average:
+                hash_ = hash_ + '1'
             else:
-                hash = hash + '0'
-    print("aHash:" + str(hash))
-    return hash
+                hash_ = hash_ + '0'
+    print("aHash:" + str(hash_))
+    return hash_
 
 
 def p_hash(img):
     # 感知hash算法
     img = cv2.resize(img, (32, 32), interpolation=cv2.INTER_AREA)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    hash = ''
+    hash_ = ''
     mean = 0.0
     h, w = img.shape[:2]
     vis0 = np.zeros((h, w), np.float32)
@@ -256,11 +257,11 @@ def p_hash(img):
     for i in range(8):
         for j in range(8):
             if vis1[i, j] >= mean:
-                hash = hash + '1'
+                hash_ = hash_ + '1'
             else:
-                hash = hash + '0'
-    print("pHash:" + str(hash))
-    return hash
+                hash_ = hash_ + '0'
+    print("pHash:" + str(hash_))
+    return hash_
 
 
 def hamming_distance(hash1, hash2):
