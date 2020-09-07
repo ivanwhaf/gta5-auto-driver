@@ -1,15 +1,15 @@
 # @Author: Ivan
-# @LastEdit: 2020/8/6
+# @LastEdit: 2020/8/13
 import os
 import cv2  # install
 import numpy as np  # install
 from keras import backend as K
 from keras.models import Model
-import matplotlib.pyplot as plt  # installs
+import matplotlib.pyplot as plt  # install
 
 # ----------------Neural Network Visualization----------------
 
-# 输入图像维度
+# input shape
 width, height, depth = 100, 100, 3
 
 
@@ -70,10 +70,10 @@ def show_intermediate_output(model, layer_name, image):
     else:
         test_data = test_data.reshape(1, height, width, depth)
 
-    output = get_intermediate_output(model, layer_name, test_data)  # 中间层输出
-    n = output.shape[-1]  # 特征图中特征个数
-    size = output.shape[1]  # 特征图边长
-    display_grid = np.zeros((size * 1, n * size))  # 网格
+    output = get_intermediate_output(model, layer_name, test_data)
+    n = output.shape[-1]  # number of feature
+    size = output.shape[1]  # feature map side length
+    display_grid = np.zeros((size * 1, n * size))  # grid
 
     for i in range(n):
         channel_image = output[:, :, i]
@@ -83,7 +83,7 @@ def show_intermediate_output(model, layer_name, image):
     plt.title(layer_name)
     plt.grid(False)
     plt.imshow(display_grid, cmap='viridis')
-    plt.savefig('visualize/' + layer_name + '_output.jpg')  # 保存中间层输出图
+    plt.savefig('visualization/' + layer_name + '_output.jpg')  # save output diagram
     plt.show()  # must show after imshow
 
     return display_grid
@@ -115,10 +115,10 @@ def show_heatmap(model, layer_name, image):
         test_data = test_data.reshape(1, height, width, depth)
 
     preds = model.predict(test_data)
-    index = np.argmax(preds[0])  # 输出类别的索引
+    index = np.argmax(preds[0])  # index of output class
     output = model.output[:, index]
 
-    layer = model.get_layer(layer_name)  # 中间层
+    layer = model.get_layer(layer_name)  # intermediate layer
 
     grads = K.gradients(output, layer.output)[0]
 
@@ -141,9 +141,9 @@ def show_heatmap(model, layer_name, image):
 
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     heatmap = cv2.resize(heatmap, (img.shape[1], img.shape[0]))
-    heatmap = np.uint8(255 * heatmap)  # 转换为rgb格式
-    heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)  # 热力图应用于原始图像
-    superimposed_img = heatmap * 0.4 + img  # 热力图强度因子0.4
+    heatmap = np.uint8(255 * heatmap)  # convert to rgb
+    heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)  # heatmap apply to raw image
+    superimposed_img = heatmap * 0.4 + img  # heatmap intensity factor - 0.4
     cv2.imwrite('visualize/heatmap_apply.jpg', superimposed_img)
 
     return heatmap, superimposed_img
@@ -156,9 +156,9 @@ def show_heatmap(model, layer_name, image):
 
 
 def face_detect():
-    """
-    人脸检测函数
-    调用摄像头实时检测出人脸并用矩形框框出
+    """function of detection faces
+
+    * use camera to detect faces and use rectangle box to frame
     """
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     cap = cv2.VideoCapture(0)
@@ -171,19 +171,14 @@ def face_detect():
 
 
 def cut_face(path):
-    """
-    裁剪人脸函数
-    检测出人脸后用新的人脸图片覆盖原图
-    1.图片文件夹path目录下必须包含以每一类图片为一个文件夹的子文件夹
-    如dataset文件夹下包含c1,c2,c3三个类别的子文件夹
-    每个子文件夹包含相应图片,如c1文件夹下包含1.jpg,2.jpg
-    2.文件夹路径名及所有文件名必须是英文
-    3.文件所在根目录下必须包含haarcascade_frontalface_default.xml文件
-    Args:
-        path:图片文件夹路径
-    Returns:
-        无
+    """function of cuting faces
 
+    * detect faces,cut faces,cover old image
+
+    Args:
+        path: images path
+    Returns:
+        None
     """
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     img_categories = os.listdir(path)
@@ -193,18 +188,18 @@ def cut_face(path):
             imgs = os.listdir(img_category_path)
             for img in imgs:
                 img_path = os.path.join(img_category_path, img)
-                face = cv2.imread(img_path)  # 读取图片
-                faces = face_cascade.detectMultiScale(face, 1.1, 7)  # 检测人脸
+                face = cv2.imread(img_path)  # read image
+                faces = face_cascade.detectMultiScale(face, 1.1, 7)  # detect faces
                 for x, y, w, h in faces[0]:
                     # cv2.rectangle(face,(x-5,y-25),(x+w,y+h),(0,255,0),2)
                     face = face[y - 60:y + h + 15, x:x + w]
-                cv2.imwrite(img_path, face)  # 用裁剪后的人脸覆盖原图片
+                cv2.imwrite(img_path, face)  # cover old images
                 print(img_path + '--cuting successfully')
     print('all faces cut successfully!')
 
 
 def d_hash(img):
-    # 差值hash算法
+    # Different hash algorithm
     img = cv2.resize(img, (9, 8), interpolation=cv2.INTER_AREA)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     hash_ = ''
@@ -219,7 +214,7 @@ def d_hash(img):
 
 
 def a_hash(img):
-    # 均值hash算法
+    # Average hash algorithm
     img = cv2.resize(img, (8, 8))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     hash_ = ''
@@ -240,7 +235,7 @@ def a_hash(img):
 
 
 def p_hash(img):
-    # 感知hash算法
+    # Perceptual hash algorithm
     img = cv2.resize(img, (32, 32), interpolation=cv2.INTER_AREA)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     hash_ = ''
@@ -264,8 +259,8 @@ def p_hash(img):
     return hash_
 
 
-def hamming_distance(hash1, hash2):
-    # 计算两值的汉明距离
+def _hamming_distance(hash1, hash2):
+    # calculate two values' hamming distance
     hamming = 0
     for i in range(64):
         if hash1[i] != hash2[i]:
@@ -273,21 +268,19 @@ def hamming_distance(hash1, hash2):
     return hamming
 
 
-def compare_hamming_distance(img1, img2, func):
-    # 比较两图的汉明距离
+def hamming_distance(img1, img2, func):
+    # calculate two images' hamming distance
+    hamming = None
     if func == 'aHash':
-        hamming = hamming_distance(a_hash(img1), a_hash(img2))
+        hamming = _hamming_distance(a_hash(img1), a_hash(img2))
     elif func == 'pHash':
-        hamming = hamming_distance(p_hash(img1), p_hash(img2))
+        hamming = _hamming_distance(p_hash(img1), p_hash(img2))
     elif func == 'dHash':
-        hamming = hamming_distance(d_hash(img1), d_hash(img2))
-    else:
-        return None
+        hamming = _hamming_distance(d_hash(img1), d_hash(img2))
     return hamming
 
 
 def blur_test():
-    # 图像模糊测试函数
     img = cv2.imread('1.jpg')
     img = cv2.resize(img, (800, 1000), interpolation=cv2.INTER_AREA)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

@@ -1,5 +1,5 @@
 # @Author: Ivan
-# @LastEdit: 2020/8/6
+# @LastEdit: 2020/8/13
 import os
 import time
 import numpy as np  # install
@@ -14,27 +14,27 @@ from keras.models import load_model
 from keras.layers import Conv2D, MaxPooling2D, SeparableConv2D
 from keras.layers import Dense, Dropout, Activation, Flatten
 import matplotlib.pyplot as plt  # install
+
 # from image_util import show_intermediate_output, show_heatmap
 
 np.random.seed(1337)
 # os.environ["PATH"] += os.pathsep + \
-#                       'C:/Program Files (x86)/Graphviz2.38/bin'  # 添加graphviz至环境变量 用于输出网络结构图
+#                       'C:/Program Files (x86)/Graphviz2.38/bin'
 
-epochs = 500  # 轮数
-nb_classes = 3  # 类别
-nb_per_class = 2000  # 图片数量
-batch_size = 32  # 一次训练的样本数
-lr = 0.0001  # 学习率
-activation = 'relu'  # 激活函数
-width, height, depth = 400, 90, 1  # 图片的宽、高、深度
-nb_filters1, nb_filters2 = 5, 10  # 卷积核的数目（即输出的维度）
-train_proportion = 0.8  # 训练集比例
-valid_proportion = 0.1  # 验证集比例
-test_proportion = 0.1  # 测试集比例
+epochs = 500
+nb_classes = 3
+nb_per_class = 2000
+batch_size = 32
+learning_rate = 0.0001
+activation = 'relu'
+width, height, depth = 400, 90, 1
+nb_filters1, nb_filters2 = 5, 10
+train_proportion = 0.8
+valid_proportion = 0.1
+test_proportion = 0.1
 
 
-def set_model(lr=lr, decay=1e-6, momentum=0.9):
-    # 模型初始化设置
+def set_model(lr=learning_rate, decay=1e-6, momentum=0.9):
     model = Sequential()
     if K.image_data_format() == 'channels_first':
         model.add(SeparableConv2D(nb_filters1, kernel_size=(3, 3), kernel_regularizer=l2(0.01),
@@ -61,7 +61,7 @@ def set_model(lr=lr, decay=1e-6, momentum=0.9):
     model.add(Dense(nb_classes, name='dense2'))  # output
     model.add(Activation('softmax'))
 
-    sgd = SGD(lr=lr, decay=decay, momentum=momentum,
+    sgd = SGD(lr=learning_rate, decay=decay, momentum=momentum,
               nesterov=True)  # optimizer
     model.compile(loss='categorical_crossentropy',
                   optimizer=sgd, metrics=['accuracy'])
@@ -103,8 +103,9 @@ class LossHistory(keras.callbacks.Callback):
             # val_loss
             plt.plot(iters, self.val_loss[loss_type], 'k', label='val loss')
 
-        plt.title('epoch=' + str(epochs) + ',lr=' + str(lr) + ',batch_size=' + str(batch_size) + '\nactivation=' +
-                  activation + ',nb_classes=' + str(nb_classes) + ',nb_per_class=' + str(nb_per_class))
+        plt.title('epoch=' + str(epochs) + ',lr=' + str(learning_rate) + ',batch_size=' + str(batch_size)
+                  + '\nactivation=' + activation + ',nb_classes=' + str(nb_classes) + ',nb_per_class=' + str(
+            nb_per_class))
         plt.grid(True)
         plt.xlabel(loss_type)
         plt.ylabel('acc-loss')
@@ -129,7 +130,7 @@ def train_model(model, X_train, Y_train, X_val, Y_val):
 
 def test_model(X_test, Y_test):
     model = load_model('model.h5')
-    score = model.evaluate(X_test, Y_test, verbose=0)  # 返回误差值和评估标准值
+    score = model.evaluate(X_test, Y_test, verbose=0)
     return score
 
 
@@ -156,8 +157,8 @@ def load_data():
             labels.append(2)
     labels = np.asarray(labels)
 
-    train_per_category = int(nb_per_class * train_proportion)  # 每个类别训练数量
-    valid_per_category = int(nb_per_class * valid_proportion)  # 每个类别验证数量
+    train_per_category = int(nb_per_class * train_proportion)
+    valid_per_category = int(nb_per_class * valid_proportion)
 
     X_train = images[:train_per_category]
     X_val = images[train_per_category:train_per_category + valid_per_category]
@@ -192,15 +193,15 @@ def main():
     Y_val = np_utils.to_categorical(y_val, nb_classes)
     Y_test = np_utils.to_categorical(y_test, nb_classes)
 
-    model = set_model()  # 加载神经网络模型
+    model = set_model()
 
-    # plot_model(model, to_file='model.png', show_shapes=True)  # 保存模型结构图
+    # plot_model(model, to_file='model.png', show_shapes=True)
 
     start = time.clock()
-    model = train_model(model, X_train, Y_train, X_val, Y_val)  # 训练模型
+    model = train_model(model, X_train, Y_train, X_val, Y_val)
     end = time.clock()
 
-    pred_classes = model.predict_classes(X_test, verbose=0)  # 预测类别
+    pred_classes = model.predict_classes(X_test, verbose=0)
 
     test_accuracy = np.mean(np.equal(y_test, pred_classes))
     right = np.sum(np.equal(y_test, pred_classes))
@@ -211,7 +212,7 @@ def main():
     print('Test wrong:', len(Y_test) - right)
     print('Test accuracy:', test_accuracy)
 
-    history.loss_plot('epoch')  # 绘制参数图
+    history.loss_plot('epoch')
 
 
 if __name__ == '__main__':
